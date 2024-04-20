@@ -1,15 +1,13 @@
 from rest_framework import serializers
-
-
+from django.core.mail import send_mail
 from .models import User
 
 class UserSerializer(serializers.ModelSerializer):
-
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ('login', 'email', 'password', 'firstName', 'lastName', 'last_login', 'registered')
+        fields = ('login', 'email', 'password', 'firstName', 'lastName', 'last_login', 'registered', 'meeting_time', 'meeting_format')
 
     def validate(self, attrs):
         return super().validate(attrs)

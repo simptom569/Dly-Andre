@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
-
 from datetime import datetime
+from django.contrib.auth import get_user_model
 
 
 class UserManager(BaseUserManager):
@@ -39,6 +39,42 @@ class UserManager(BaseUserManager):
         return user
 
 
+class Hobby(models.Model):
+    name = models.CharField(max_length=100)  # Название хобби
+    description = models.TextField()  # Описание хобби
+    user = models.ForeignKey('User', on_delete=models.CASCADE)  
+
+    def __str__(self):
+        return self.name
+    
+class Notification(models.Model):
+    title = models.CharField(max_length=100)  # Название уведомления
+    description = models.TextField()  # Описание уведомления
+    user = models.ForeignKey('User', on_delete=models.CASCADE)  # Пользователь, которому адресовано уведомление
+
+    def __str__(self):
+        return self.title
+
+class Department(models.Model):
+    name = models.CharField(max_length=100)  # Название отдела
+
+    def __str__(self):
+        return self.name
+
+
+class Meeting(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='meetings')
+    companion = models.ForeignKey('User', on_delete=models.CASCADE, related_name='meeting_partners')
+    date = models.DateField()
+    duration = models.DurationField(null=True, blank=True)  # Длительность встречи
+    skipped = models.BooleanField(default=False)  # Состоялась ли встреча
+    skiped_comment = models.CharField(max_length=100, blank=True)  # Комментарий по пропущенной встрече
+    feedback = models.TextField(default="")  # Описание уведомления
+
+    def __str__(self):
+        return f"{self.user.email} - {self.companion.email} - {self.date}"
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     id = models.AutoField(primary_key=True)
     login = models.CharField(max_length=40)
@@ -50,7 +86,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     last_login = models.DateTimeField(auto_now_add=datetime.now())
     avatar = models.ImageField(blank=True)
 
-    is_active = models.BooleanField(default=False)
+    meeting_time = models.PositiveIntegerField(blank=True, null=True) 
+    meeting_format = models.CharField(max_length=7, choices=(("Online", "Online"), ("Offline", "Offline")), blank=True, null=True)
+
+    department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True)
+
+    is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
