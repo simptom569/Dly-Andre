@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'base/login.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <body>
     <div class="container">
@@ -15,9 +16,68 @@
                 <div class="div-login-coffe">
                     <img src="{% static 'media/coffe.png' %}" alt="" class="login-coffe">
                 </div>
-                
+                <div class="div-title">
+                    <span class="title">RANDOM COFFE</span>
+                </div>
+                <form onsubmit="return login(event);">
+                    {% csrf_token %}
+                    <div class="div-inputs">
+                        <div class="div-input-block">
+                            <div class="input-container">
+                                <span class="text-input">Email</span>
+                                <input type="text" class="input" id="email">
+                            </div>
+                        </div>
+                        <div class="div-input-block">
+                            <div class="input-container">
+                                <span class="text-input">Password</span>
+                                <input type="password" class="input" id="password">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="div-button">
+                        <input type="submit" class="button" value="SIGN IN"></input>
+                    </div>
+                    <div class="div-social-network">
+                        <div class="social-network">
+                            <img src="{% static 'media/telegram.png' %}" alt="" class="social-image" id="telegram">
+                        </div>
+                        <div class="social-network">
+                            <img src="{% static 'media/google.png' %}" alt="" class="social-image" id="goolge">
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+    <script>
+        function login(event) {
+            event.preventDefault(); // Предотвращение стандартного поведения отправки формы
+            const email = document.querySelector('#email').value;
+            const password = document.querySelector('#password').value;
+            if (email === '' || password === '') {
+                console.log('Поля не заполнены полностью');
+            } else {
+                $.ajax({
+                    url: '/login',
+                    method: 'POST',
+                    data: {
+                        email: email,
+                        password: password
+                    },
+                    csrfmiddlewaretoken: '{{ csrf_token }}',
+                    success: function (response) {
+                        console.log(response);
+                        // Дополнительные действия при успешной отправке формы
+                    },
+                    error: function (response) {
+                        console.log(response);
+                        // Дополнительные действия при ошибке отправки формы
+                    }
+                });
+            }
+            return false; // Предотвращаем дальнейшее выполнение стандартного поведения
+        }
+    </script>
 </body>
 </html>

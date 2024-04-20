@@ -15,18 +15,22 @@ html, body {
 }
 
 .warper {
+    position: relative;
     width: 546px;
     height: 654px;
     box-shadow: 0px 0px 16px 3px rgba(0, 0, 0, 0.25);
     margin-bottom: -150px;
     border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 .div-login-coffe {
     height: 415px;
-    position: relative;
+    position: absolute;
     top: -200px;
-    right: -60px;
+    right: 60px;
 }
 
 .login-coffe {
@@ -73,4 +77,115 @@ html, body {
 .login-coffe {
     animation: snaking 1s ease-in-out;
     animation-delay: 1.2s;
+}
+
+.div-inputs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    row-gap: 26px;
+    margin-bottom: 30px;
+}
+
+.div-input-block {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.text-input {
+    font-size: 18px;
+    color: #000;
+    font-weight: 600;
+}
+
+.input {
+    width: 410px;
+    height: 50px;
+    border-radius: 10px;
+    border: 2px solid #000;
+    font-size: 20px;
+    font-weight: 600px;
+    padding: 0px 20px;
+    transition: all .3s ease-in-out;
+}
+
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    row-gap: 6px;
+}
+
+.div-social-network {
+    display: flex;
+    justify-content: center;
+    column-gap: 24px;
+    margin-bottom: 70px;
+}
+
+.social-network {
+    width: 120px;
+    height: 40px;
+    border: 2px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+}
+
+.social-network:hover {
+    background-color: #fdda00;
+}
+
+#telegram {
+    width: 30px;
+    height: 30px;
+}
+
+#goolge {
+    width: 40px;
+    height: 40px;
+}
+
+.div-button {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    height: 50px;
+    background-color: #fdda00;
+    border: 2px solid #fdda00;
+    border-radius: 8px;
+    width: 350px;
+    font-size: 22px;
+    font-weight: 600;
+    color: #000;
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+}
+
+.button:hover {
+    background-color: #fff;
+    border: 2px solid #000;
+    color: #000;
+}
+
+.div-title {
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.title {
+    font-size: 30px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 8px;
 }
