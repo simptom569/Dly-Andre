@@ -31,11 +31,12 @@ html, body {
     position: absolute;
     top: -200px;
     right: 60px;
+    z-index: 2;
 }
 
 .login-coffe {
     height: 100%;
-    rotate: 7deg;
+    rotate: 12deg;
 }
 
 @keyframes slideAndShake {
@@ -54,19 +55,19 @@ html, body {
 
 @keyframes snaking {
     0% {
-        rotate: 20deg;
+        rotate: 12deg;
     }
     
-    33% {
-        rotate: 10deg;
+    20% {
+        rotate: 20deg;
     }
 
-    66% {
-        rotate: 15deg;
+    60% {
+        rotate: 0deg;
     }
 
-    10% {
-        rotate: 38deg;
+    100% {
+        rotate: 12deg;
     }
 }
 
@@ -75,8 +76,9 @@ html, body {
 }
 
 .login-coffe {
-    animation: snaking 1s ease-in-out;
+    animation: snaking 1.5s ease-in-out;
     animation-delay: 1.2s;
+    user-select: none;
 }
 
 .div-inputs {
@@ -181,6 +183,8 @@ html, body {
     margin-bottom: 40px;
     display: flex;
     justify-content: center;
+    position: relative;
+    z-index: 3;
 }
 
 .title {

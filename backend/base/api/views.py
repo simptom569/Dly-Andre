@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.viewsets import ModelViewSet
 from base.serializer import UserSerializer
 from rest_framework.response import Response
@@ -20,16 +21,20 @@ class UserViewSet(ModelViewSet):
         return User.objects.filter(email=self.request.user.email)
     
     def get_permissions(self):
-        if self.action == 'create':
-            permission_classes = [AllowAny]
-        else:
-            permission_classes = [IsAuthenticated]
+        permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
     def partial_update(self, request, *args, **kwargs):
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
     
+    def delete(self, request, *args, **kwargs):
+        user = self.get_object()
+        if not request.user.is_staff:
+            if user == request.user:
+                raise PermissionDenied("You cannot delete yourself.")
+        self.perform_destroy(user)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     # Поиск юзеров с одинаковыми параметрами
     @action(detail=False, methods=['get'])

@@ -7,7 +7,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('login', 'email', 'password', 'firstName', 'lastName', 'last_login', 'registered', 'meeting_time', 'meeting_format')
+        fields = ('id', 'login', 'email', 'password', 'firstName', 'lastName', 'last_login', 'registered', 'meeting_time', 'meeting_format')
 
     def validate(self, attrs):
         return super().validate(attrs)
