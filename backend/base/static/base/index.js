@@ -127,29 +127,30 @@ document.addEventListener('DOMContentLoaded', function() {
         // Создаем HTML-разметку на основе полученных данных о встречах пользователя
         let meetingsHTML = '<div class="meetings-container">';
         meetings.forEach(meeting => {
-            meetingsHTML += `
-                <div class="meeting">
-                    <div class="date">${meeting.date}</div>
-                    <div class="time">${meeting.time}</div>
-                    <div class="companion">${meeting.companion}</div>
-                    <div class="companion-telegram">${meeting.companion_telegram}</div>
-                    <div class="format">${meeting.format}</div>
-                    <div class="duration">${meeting.duration}</div>
-                </div>
-            `;
-            // Если встреча в будущем, добавляем кнопку пропуска
-            if (isFutureMeeting(meeting)) {
-                meetingsHTML += `<button class="skip-meeting-btn" data-meeting-id="${meeting.id}">Skip</button>`;
-            }
+            // Проверяем, пропущена ли встреча
+                meetingsHTML += `
+                    <div class="meeting">
+                        <div class="date">${meeting.date}</div>
+                        <div class="time">${meeting.time}</div>
+                        <div class="companion">${meeting.companion}</div>
+                        <div class="companion-telegram">${meeting.companion_telegram}</div>
+                        <div class="format">${meeting.format}</div>
+                        <div class="duration">${meeting.duration}</div>
+                    </div>
+                `;
+                // Если встреча в будущем, добавляем кнопку пропуска
+                if (isFutureMeeting(meeting) && (!(meeting.skipped))) {
+                    meetingsHTML += `<button class="skip-meeting-btn" data-meeting-id="${meeting.id}">×</button>`;
+                }
         });
         meetingsHTML += '</div>';
-
+    
         // Обновляем содержимое блока .content информацией о встречах пользователя
         container.innerHTML = meetingsHTML;
-
+    
         // Добавляем контейнер новых встреч внутрь блока content
         content.appendChild(newMeetingsContainer);
-
+    
         /// Добавляем обработчики событий для кнопок пропуска встречи
         const skipMeetingButtons = container.querySelectorAll('.skip-meeting-btn');
         skipMeetingButtons.forEach(button => {
@@ -157,9 +158,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 const meetingId = this.dataset.meetingId; // Получаем ID встречи из атрибута data-meeting-id
                 handleSkipMeetingClick(meetingId, userid); // Вызываем функцию для отправки PATCH запроса
                 console.log(meetingId);
+    
+                document.querySelector('.div-model2-container').style.display = 'flex'
             });
         });
     }
+    
 
     // Функция для определения, является ли встреча в будущем
     function isFutureMeeting(meeting) {

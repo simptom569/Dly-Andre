@@ -25,6 +25,7 @@
     flex-direction: row;
     align-items: center;
     order: 2;
+    position: relative;
 }
 
 .meeting {
@@ -142,4 +143,17 @@
     display: flex;
     order: 1;
     margin: 0 0 100px 0;
+}
+
+.skip-meeting-btn {
+    position: absolute;
+    bottom: -10px;
+    height: 36px;
+    width: 120px;
+    border: none;
+    background-color: #FC1D47;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 24px;
+    cursor: pointer;
 }

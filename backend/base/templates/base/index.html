@@ -6,10 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Панель</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link rel="stylesheet" href="{% static 'base/index.css' %}">
     <link rel="stylesheet" href="{% static 'base/meetings.css' %}">
 </head>
 <body>
+    <div class="div-model2-container">
+        <div class="div-model2-warper">
+            <div class="div-model2-text">
+                <span class="model2-text">Опишите причину своего отказа от нетворкинга<br>(не обязательно)</span>
+            </div>
+            <div class="div-model2-input">
+                <textarea name="model2" id="model2-textarea" class="model2-input" placeholder="Причина"></textarea>
+            </div>
+            <div class="div-model2-but">
+                <button class="model2-but">Отрпавить</button>
+            </div>
+        </div>
+    </div>
     <div id="userid" data-userid="{{ userid }}"></div>
     <nav class="navbar">
         <div class="user-info">
@@ -53,6 +67,35 @@
     
 
     <script src="{% static 'base/index.js' %}"></script>
+    <script>
+        but = document.querySelector('.model2-but')
+        but.addEventListener('click', (e) => {
+            e.preventDefault()
+            const int = document.querySelector('.model2-input')
+            const val = int.value
+            if (val != '') {
+                $.ajax({
+                    url: '/change_meeting_comm_field', // URL к вашему Django view
+                    method: 'POST',
+                    data: { // ID записи модели, которую вы хотите изменить
+                        new_comm: val // Новое значение поля модели
+                    },
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}' // CSRF токен для защиты от CSRF атак
+                    },
+                    success: function (response) {
+                        console.log(response);
+                        // Дополнительные действия при успешном изменении поля модели
+                    },
+                    error: function (response) {
+                        console.error(response);
+                        // Дополнительные действия при ошибке изменения поля модели
+                    }
+                });
+                }
+                document.querySelector('.div-model2-container').style.display = 'none'
+        })
+    </script>
     <!-- <script src="{% static 'base/profile.js' %}"></script> -->
 </body>
 </html>

@@ -145,6 +145,7 @@ def meets_page(request):
                 'format': meeting.meeting_format,
                 'duration': meeting.duration,
                 'id': meeting.id,
+                'skipped': meeting.skipped
             })
         else:
             # Если это прошлая встреча, добавляем данные в список прошлых встреч
@@ -156,7 +157,7 @@ def meets_page(request):
                 'format': meeting.meeting_format,
                 'duration': meeting.duration,
                 'id': meeting.id,
-
+                'skipped': meeting.skipped
             })
 
     # Возвращаем данные в формате JSON
@@ -189,3 +190,24 @@ class MeetingDetailView(APIView):
             return Response({'message': 'Meeting skipped successfully'}, status=status.HTTP_200_OK)
         except Meeting.DoesNotExist:
             return Response({'message': 'Meeting not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+def change_meeting_comm_field(request):
+    if request.method == 'POST':
+        user_id = request.user.id
+        new_field_value = request.POST.get('new_comm')
+
+        try:
+            last_meeting = Meeting.objects.filter(user_id=user_id).latest('date')
+            # Если вам нужны дополнительные данные о встрече, вы можете их получить здесь
+            # Например: last_meeting_date = last_meeting.date
+            # last_meeting_duration = last_meeting.duration
+            # и т.д.
+            last_meeting.feedback = new_field_value
+            last_meeting.save()
+            # Возврат данных о последней встрече в формате JSON
+            return JsonResponse({'status': 'success', 'last_meeting': last_meeting.id})
+        except Meeting.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Встречи не найдены'})
+    else:
+        return JsonResponse({'status': 'error', 'message': 'Метод не поддерживается'})
