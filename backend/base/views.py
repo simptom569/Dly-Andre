@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from datetime import datetime
+from django.core import serializers
 
 from .models import User, Meeting
 
@@ -51,8 +52,8 @@ def get_all_data_user(request):
     is_staff = request.user.is_staff
     
     # Проверка, разрешено ли текущему пользователю просматривать данные
-    if (not is_staff) and (user.id != user_id):
-        return HttpResponse("У вас нет прав доступа к этим данным", status=403)
+    # if (not is_staff) and (user.id != user_id):
+    #     return HttpResponse("У вас нет прав доступа к этим данным", status=403)
     
     try:
         if user_id:
@@ -64,17 +65,21 @@ def get_all_data_user(request):
     
     completed_meetings = Meeting.objects.filter(Q(user=user) | Q(companion=user), skipped=False).count()
     
-    user_feedback = Meeting.objects.filter(user=user).aggregate(avg_feedback=Avg('feedback'))
-    
+    # user_feedback = Meeting.objects.filter(user=user).aggregate(avg_feedback=Avg('feedback'))
+
+
+    # Сериализуем объект пользователя в словарь
+    serialized_user = serializers.serialize('python', [user])[0]['fields']
     context = {
-        'user': user,
+        'user': serialized_user,
         'total_meetings': total_meetings,
         'completed_meetings': completed_meetings,
-        'user_feedback': user_feedback['avg_feedback'],
+        # 'user_feedback': user_feedback['avg_feedback'],
     }
-    print(context)
+    # print(context)
     
-    return HttpResponse(content=context)
+    # return HttpResponse(content=context)
+    return JsonResponse(context)
 
 
 @permission_required('auth.is_staff', raise_exception=True)
@@ -96,6 +101,8 @@ def get_all_data_admin(request):
 
     # Получение количества встреч, которые состоялись (поле skipped равно False)
     meetings_happened = Meeting.objects.filter(skipped=False).count()
+    print(total_meetings)
+    print(meetings_happened)
     
     # Расчет процента встреч, которые состоялись, относительно общего числа встреч
     if total_meetings != 0:
@@ -119,13 +126,34 @@ def get_all_data_admin(request):
     return JsonResponse(data)
 
 
+def get_user_info(request):
+    user_id = request.GET.get('id')
+    try:
+        user = User.objects.get(id=user_id)
+        user_data = {
+            'id': user.id,
+            'is_staff': user.is_staff,
+            # Другие поля пользователя, которые вы хотите вернуть
+        }
+        print(user_data)
+        return JsonResponse(user_data)
+    except Exception as e:
+        # Печать подробностей об ошибке в консоль для отладки
+        print(e)
+        # Возврат ошибки сервера
+        return JsonResponse({'error': 'Internal Server Error'}, status=500)
+
+
 @login_required(login_url="/login")
 def meets_page(request):
     # Получаем текущего пользователя
     user = request.user
 
+    if request.user.is_staff:
+        user_meetings = Meeting.objects.all()
+    else:
     # Ищем все встречи, в которых участвует текущий пользователь как создатель или компаньон
-    user_meetings = Meeting.objects.filter(Q(user=user) | Q(companion=user))
+        user_meetings = Meeting.objects.filter(Q(user=user) | Q(companion=user))
 
     # Формируем списки данных о будущих и прошлых встречах пользователя для последующей сериализации
     future_meetings_data = []
@@ -203,7 +231,7 @@ def change_meeting_comm_field(request):
             # Например: last_meeting_date = last_meeting.date
             # last_meeting_duration = last_meeting.duration
             # и т.д.
-            last_meeting.feedback = new_field_value
+            last_meeting.skiped_comment = new_field_value
             last_meeting.save()
             # Возврат данных о последней встрече в формате JSON
             return JsonResponse({'status': 'success', 'last_meeting': last_meeting.id})
@@ -211,3 +239,49 @@ def change_meeting_comm_field(request):
             return JsonResponse({'status': 'error', 'message': 'Встречи не найдены'})
     else:
         return JsonResponse({'status': 'error', 'message': 'Метод не поддерживается'})
+
+
+
+def create_meetings_for_intersecting_intervals(request):
+    users_with_meeting_time = User.objects.exclude(meeting_start_point__isnull=True).exclude(meeting_end_point__isnull=True)
+
+    # Перебираем каждого пользователя
+    for user1 in users_with_meeting_time:
+        # Проверяем, не участвует ли пользователь уже в другой встрече
+        if user1.meetings.exists():
+            continue
+
+        # Перебираем всех остальных пользователей
+        for user2 in users_with_meeting_time:
+            if user1 == user2:  # Исключаем случай, когда user1 и user2 один и тот же пользователь
+                continue
+
+            # Проверяем, не участвует ли пользователь уже в другой встрече
+            if user2.meetings.exists():
+                continue
+
+            # Проверяем пересечение временных интервалов
+            if (user1.meeting_start_point <= user2.meeting_end_point and
+                    user1.meeting_end_point >= user2.meeting_start_point):
+                # Находим пересекающийся интервал
+                start_point = max(user1.meeting_start_point, user2.meeting_start_point)
+                end_point = min(user1.meeting_end_point, user2.meeting_end_point)
+
+                # Проверяем, совпадают ли форматы встречи у обоих пользователей
+                if user1.meeting_format == user2.meeting_format:
+                    # Проверяем, не существует ли уже такой встречи
+                    if not Meeting.objects.filter(user=user1, companion=user2, date=start_point.date(), time=start_point.time(), duration=end_point - start_point).exists():
+                        # Создаем новое событие встречи для пользователей
+                        meeting = Meeting.objects.create(
+                            user=user1,
+                            companion=user2,
+                            date=start_point.date(),  # Используем только дату пересечения
+                            time=start_point.time(),  # Используем только время начала пересечения
+                            duration=end_point - start_point,  # Длительность встречи равна времени пересечения
+                            meeting_format=user1.meeting_format  # Формат встречи берем от одного из пользователей
+                        )
+                        # Дополнительно можно добавить логику для уведомлений или других действий
+    return JsonResponse({'data': 'Успешно'})
+
+# Вызываем функцию для создания встреч на пересекающиеся интервалы
+# create_meetings_for_intersecting_intervals()

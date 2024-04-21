@@ -99,6 +99,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     meeting_time = models.PositiveIntegerField(blank=True, null=True) 
     meeting_format = models.CharField(max_length=7, choices=(("Online", "Online"), ("Offline", "Offline")), blank=True, null=True)
+    meeting_start_point = models.DateTimeField(blank=True, null=True)
+    meeting_end_point = models.DateTimeField(blank=True, null=True)
 
     department = models.ForeignKey('Department', on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -114,6 +116,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['login', 'password', 'firstName', 'lastName']
     USERNAME_FIELD = 'email'
     EMAIL_FIELD = 'email'
+
+    GENDER_CHOICES = [
+        ('Man', 'Man'),
+        ('Woman', 'Woman'),
+    ]
+    gender = models.CharField(max_length=5, choices=GENDER_CHOICES, null=True, blank=True)
 
     def __str__(self) -> str:
         return self.email
