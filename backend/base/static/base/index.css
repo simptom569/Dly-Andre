@@ -253,3 +253,12 @@ button[type="submit"]:hover {
     width: 200px;
     cursor: pointer;
 }
+
+#createPairsBtn {
+    width: 130px;
+    height: 40px;
+    cursor: pointer;
+    background-color: transparent;
+    border: 2px solid #F8F32B;
+    color: #fff;
+}

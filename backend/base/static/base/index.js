@@ -28,12 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log(is_staff);
 
-    if (is_staff) {
-        document.getElementById("createPairsBtn").style.display = "block";
-    } else {
-        document.getElementById("createPairsBtn").style.display = "none";
-    }
-
     // Функция для создания формы профиля
     function createProfileForm() {
         profileFormContainer.innerHTML = ''; // Очищаем содержимое контейнера
