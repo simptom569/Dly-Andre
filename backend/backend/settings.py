@@ -89,7 +89,6 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'backend.urls'
 
-
 TEMPLATE_DIR=os.path.join(BASE_DIR,'templates')
 
 TEMPLATES = [

@@ -1,0 +1,145 @@
+@font-face {
+    font-family: 'Montserrat_medium';
+    src: url('/static/fonts/Montserrat/Montserrat-Medium.ttf') format('truetype'); /* Укажите путь к файлу Montserrat Regular */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Montserrat_regular';
+    src: url('/static/fonts/Montserrat/Montserrat-Regular.ttf') format('truetype'); /* Укажите путь к файлу Montserrat Regular */
+    font-weight: normal;
+    font-style: normal;
+}
+
+
+
+
+.meetings-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    justify-content: center;
+    justify-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    align-items: center;
+    order: 2;
+}
+
+.meeting {
+    position: relative;
+    display: flex;
+    border: 1px solid #8d99ae1f;
+    border-radius: 11px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 40%;
+    flex-wrap: wrap;
+    flex-grow: 1;
+    box-sizing: border-box;
+}
+
+
+.meeting div {
+    font-family: 'Montserrat_regular', sans-serif;
+    color: #FFFFFF;
+    border-radius: 15px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.meeting .date::before {
+    content: "Дата:  ";
+    font-weight: bold;
+}
+
+.meeting .time::before {
+    content: "Время:  ";
+    font-weight: bold;
+}
+
+.meeting .companion::before {
+    content: "Собеседник:  ";
+    font-weight: bold;
+}
+
+.meeting .companion-telegram::before {
+    content: "Контакты: ";
+    font-weight: bold;
+}
+
+.meeting .format::before {
+    content: "Формат: ";
+    font-weight: bold;
+}
+.meeting .duration::before {
+    content: "Длительность: ";
+    font-weight: bold;
+}
+
+.meeting .date {
+    /* font-weight: bold; */
+    margin: 5px 0 0 0;
+    background-color: #353850;
+    padding: 5px;
+    width: 31%;
+    flex-grow: 1;
+    height: 80px;
+    order: 1;
+}
+.meeting .time {
+    margin: 5px 0 0 5px;
+    background-color: #353850;
+    padding: 5px;
+    width: 30%;
+    height: 80px;
+    flex-grow: 1;
+    order: 2;
+}
+.meeting .companion {
+    margin: 5px 0 0 5px;
+    background-color: #353850;
+    padding: 5px;
+    width: 31%;
+    height: 80px;
+    flex-grow: 1;
+    order: 3;
+}
+.meeting .companion-telegram {
+    margin: 5px 0 0 0;
+    background-color: #353850;
+    padding: 5px;
+    width: 33%;
+    height: 80px;
+    flex-grow: 1;
+    order: 4;
+}
+.meeting .format {
+    margin: 5px 0 0 5px;
+    background-color: #353850;
+    padding: 5px;
+    width: 33%;
+    height: 80px;
+    flex-grow: 1;
+    order: 5;
+}
+.meeting .duration {
+    margin: 5px 0 0 5px;
+    background-color: #353850;
+    padding: 5px;
+    width: 33%;
+    height: 80px;
+    flex-grow: 1;
+    order: 5;
+}
+
+
+
+.new-meetings-container {
+    display: flex;
+    order: 1;
+    margin: 0 0 100px 0;
+}

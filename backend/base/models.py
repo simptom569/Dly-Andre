@@ -63,13 +63,22 @@ class Department(models.Model):
 
 
 class Meeting(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='meetings')
     companion = models.ForeignKey('User', on_delete=models.CASCADE, related_name='meeting_partners')
     date = models.DateField()
+    time = models.TimeField(null=True, blank=True)  # Время встречи
     duration = models.DurationField(null=True, blank=True)  # Длительность встречи
     skipped = models.BooleanField(default=False)  # Состоялась ли встреча
     skiped_comment = models.CharField(max_length=100, blank=True)  # Комментарий по пропущенной встрече
-    feedback = models.TextField(default="")  # Описание уведомления
+    feedback = models.TextField(default="", null=True)  # Отзыв
+
+    MEETING_FORMAT_CHOICES = [
+        ('Online', 'Online'),
+        ('Offline', 'Offline'),
+    ]
+
+    meeting_format = models.CharField(max_length=7, choices=MEETING_FORMAT_CHOICES, blank=True, null=True)
 
     def __str__(self):
         return f"{self.user.email} - {self.companion.email} - {self.date}"
@@ -85,6 +94,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     registered = models.DateTimeField(auto_now_add=datetime.now())
     last_login = models.DateTimeField(auto_now_add=datetime.now())
     avatar = models.ImageField(blank=True)
+
+    status = models.BooleanField(default=False)
 
     meeting_time = models.PositiveIntegerField(blank=True, null=True) 
     meeting_format = models.CharField(max_length=7, choices=(("Online", "Online"), ("Offline", "Offline")), blank=True, null=True)

@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'base/index.css' %}">
+    <link rel="stylesheet" href="{% static 'base/meetings.css' %}">
+</head>
+<body>
+    <div id="userid" data-userid="{{ userid }}"></div>
+    <nav class="navbar">
+        <div class="user-info">
+            {% if user %}
+                <span>{{ user.login }}</span> <!-- Или любая другая информация о пользователе -->
+                <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
+            {% else %}
+                <a href="{% url 'login' %}">Вход</a>
+            {% endif %}
+        </div> <!-- Закрываем div для класса user-info -->
+    </nav>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="{% static 'media/logo.png' %}" alt="Logo">
+        </div>
+        <div class="menu">
+            <ul>
+                <li id="static"><i class="fas fa-chart-line"></i><a href="#">Staticticks</a></li>
+                <li id="meets"><i class="fas fa-coffee"></i><a href="#" id="meets-btn">Meets</a></li> <!-- Добавляем id для кнопки Meets -->
+                <li id="profile"><i class="fa fa-address-card"></i><a href="#" id="profile-btn">Profile</a></li>
+            </ul>
+        </div>
+    </div>
+
+    
+    <div class="content">
+        <form id="profile-form" data-user-id="{{ userId }}" style="display: none;">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="first_name">First Name:</label>
+                <input type="text" id="first_name" name="first_name" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name:</label>
+                <input type="text" id="last_name" name="last_name" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">Update User</button>
+        </form>
+    </div>
+    
+    
+
+    <script src="{% static 'base/index.js' %}"></script>
+    <!-- <script src="{% static 'base/profile.js' %}"></script> -->
+</body>
+</html>

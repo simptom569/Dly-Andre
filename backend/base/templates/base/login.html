@@ -67,7 +67,9 @@
                     },
                     csrfmiddlewaretoken: '{{ csrf_token }}',
                     success: function (response) {
-                        console.log(response);
+                        if (response.data === 'Успешно') {
+                            window.location.href = '/'
+                        }
                         // Дополнительные действия при успешной отправке формы
                     },
                     error: function (response) {
